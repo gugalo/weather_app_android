@@ -16,4 +16,8 @@ public class WeatherData {
         this.pressure = pressure;
         this.humidity = humidity;
     }
+
+    public String getTempFormated() {
+        return  String.format("%2.1f°", temp);
+    }
 }

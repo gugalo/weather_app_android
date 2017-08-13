@@ -1,6 +1,7 @@
 package let.it.be.weatherapp;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
@@ -13,8 +14,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 
+import let.it.be.weatherapp.adapters.CityListWeatherAdapter;
 import let.it.be.weatherapp.models.exceptions.NetworkException;
+import let.it.be.weatherapp.models.weather.CityWeatherData;
 import let.it.be.weatherapp.models.weather.CurrentWeatherData;
 import let.it.be.weatherapp.models.weather.WeatherForecastData;
 import let.it.be.weatherapp.network.WeatherLoader;
@@ -22,21 +26,16 @@ import let.it.be.weatherapp.network.WeatherLoader;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final String TAG = MainActivity.class.getSimpleName();
+
+    private ListView cityList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -46,6 +45,20 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        cityList = (ListView) findViewById(R.id.cityList);
+        WeatherLoader.loadCurrentAsync(new WeatherLoader.ResultListener<CurrentWeatherData>() {
+            @Override
+            public void onSuccess(CurrentWeatherData result) {
+                cityList.setAdapter(new CityListWeatherAdapter(result.list));
+            }
+
+            @Override
+            public void onFailed(NetworkException error) {
+                Log.e(TAG, "Error loading current weather", error);
+                // show error screen
+            }
+        });
     }
 
     @Override
@@ -56,40 +69,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        WeatherLoader.loadForecastAsync("589580", new WeatherLoader.ResultListener<WeatherForecastData>() {
-            @Override
-            public void onSuccess(WeatherForecastData result) {
-                Log.e("", result.toString());
-            }
-
-            @Override
-            public void onFailed(NetworkException error) {
-                Log.e("", error.toString());
-
-            }
-        });
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
