@@ -1,7 +1,7 @@
 package let.it.be.weatherapp.adapters;
 
-import android.content.Context;
 import android.database.DataSetObserver;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,8 +10,12 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+
 import let.it.be.weatherapp.R;
-import let.it.be.weatherapp.models.weather.CityForecastData;
 import let.it.be.weatherapp.models.weather.CityWeatherData;
 
 public class CityListWeatherAdapter implements ListAdapter {
@@ -103,21 +107,24 @@ public class CityListWeatherAdapter implements ListAdapter {
     }
 
     private static class ViewHolder {
-        public int itemId;
-        public TextView cityName;
-        public TextView temperature;
-        public ImageView weatherIcon;
+        private int itemId;
+        private String iconUrl;
+        private TextView cityName;
+        private TextView temperature;
+        private ImageView weatherIcon;
 
-        public ViewHolder(@NonNull View itemView) {
+        private ViewHolder(@NonNull View itemView) {
             this.cityName = (TextView) itemView.findViewById(R.id.cityName);
             this.temperature = (TextView) itemView.findViewById(R.id.temperature);
             this.weatherIcon = (ImageView) itemView.findViewById(R.id.weatherIcon);
         }
 
-        public void bindView(@NonNull CityWeatherData cityWeatherData) {
+        private void bindView(@NonNull CityWeatherData cityWeatherData) {
             this.itemId = cityWeatherData.id;
+            this.iconUrl = cityWeatherData.getWeatherIconUrl();
             this.cityName.setText(cityWeatherData.name);
             this.temperature.setText(cityWeatherData.main.getTempFormated());
+            ImageLoader.getInstance().displayImage(iconUrl, weatherIcon);
         }
     }
 }
