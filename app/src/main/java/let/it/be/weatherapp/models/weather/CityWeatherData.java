@@ -2,13 +2,11 @@ package let.it.be.weatherapp.models.weather;
 
 import java.util.Map;
 
-import let.it.be.weatherapp.models.LatLng;
-
 public class CityWeatherData {
     public final int id;
     public final double dt;
     public final String name;
-    public final LatLng coord;
+    public final Map coord;
     public final WeatherData main;
     public final WindData wind;
     public final FalloutData rain;
@@ -16,7 +14,7 @@ public class CityWeatherData {
     public final Map clouds;
     public final WeatherIdData[] weather;
 
-    public CityWeatherData(int id, double dt, String name, LatLng coord, WeatherData main, WindData wind, FalloutData rain, FalloutData snow, Map clouds, WeatherIdData[] weather) {
+    public CityWeatherData(int id, double dt, String name, Map coord, WeatherData main, WindData wind, FalloutData rain, FalloutData snow, Map clouds, WeatherIdData[] weather) {
         this.id = id;
         this.dt = dt;
         this.name = name;

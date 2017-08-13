@@ -16,6 +16,7 @@ import android.view.MenuItem;
 
 import let.it.be.weatherapp.models.exceptions.NetworkException;
 import let.it.be.weatherapp.models.weather.CurrentWeatherData;
+import let.it.be.weatherapp.models.weather.WeatherForecastData;
 import let.it.be.weatherapp.network.WeatherLoader;
 
 public class MainActivity extends AppCompatActivity
@@ -70,9 +71,9 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        WeatherLoader.loadCurrentAsync(new WeatherLoader.ResultListener() {
+        WeatherLoader.loadForecastAsync("589580", new WeatherLoader.ResultListener<WeatherForecastData>() {
             @Override
-            public void onSuccess(CurrentWeatherData result) {
+            public void onSuccess(WeatherForecastData result) {
                 Log.e("", result.toString());
             }
 

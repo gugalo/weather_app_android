@@ -1,6 +1,7 @@
 package let.it.be.weatherapp.network;
 
 import let.it.be.weatherapp.models.weather.CurrentWeatherData;
+import let.it.be.weatherapp.models.weather.WeatherForecastData;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -25,6 +26,11 @@ public final class WeatherProvider {
     private WeatherProvider() {
     }
 
+    private interface WeatherForecastService {
+        @GET("data/" + API_VERSION + "/forecast?APPID=" + API_KEY)
+        Call<WeatherForecastData> getForecastForCity(@Query("id") String cityId);
+    }
+
     private interface CurrentWeatherService {
         @GET("data/" + API_VERSION + "/box/city?APPID=" + API_KEY)
         Call<CurrentWeatherData> getCurrentWeather(@Query("bbox") String cityMapBounds);
@@ -32,5 +38,9 @@ public final class WeatherProvider {
 
     static Call<CurrentWeatherData> requestCurrentWeather(String cityMapBounds) {
         return retrofit.create(CurrentWeatherService.class).getCurrentWeather(cityMapBounds);
+    }
+
+    static Call<WeatherForecastData> requestCityForecast(String cityId) {
+        return retrofit.create(WeatherForecastService.class).getForecastForCity(cityId);
     }
 }
