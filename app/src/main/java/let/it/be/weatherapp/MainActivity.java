@@ -3,6 +3,7 @@ package let.it.be.weatherapp;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,6 +13,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import let.it.be.weatherapp.models.exceptions.NetworkException;
+import let.it.be.weatherapp.models.weather.CurrentWeatherData;
+import let.it.be.weatherapp.models.weather.WeatherForecastData;
+import let.it.be.weatherapp.network.WeatherLoader;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -65,6 +71,18 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        WeatherLoader.loadForecastAsync("589580", new WeatherLoader.ResultListener<WeatherForecastData>() {
+            @Override
+            public void onSuccess(WeatherForecastData result) {
+                Log.e("", result.toString());
+            }
+
+            @Override
+            public void onFailed(NetworkException error) {
+                Log.e("", error.toString());
+
+            }
+        });
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
