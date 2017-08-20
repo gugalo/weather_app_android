@@ -1,6 +1,9 @@
 package let.it.be.weatherapp.models.exceptions;
 
 public class NetworkException extends Exception {
+
+    public static final String TAG = NetworkException.class.getSimpleName();
+
     public NetworkException() {
     }
 
