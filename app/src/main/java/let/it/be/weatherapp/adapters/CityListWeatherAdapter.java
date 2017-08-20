@@ -1,60 +1,25 @@
 package let.it.be.weatherapp.adapters;
 
-import android.database.DataSetObserver;
-import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import let.it.be.weatherapp.R;
 import let.it.be.weatherapp.models.weather.CityWeatherData;
 
-public class CityListWeatherAdapter implements ListAdapter {
+public class CityListWeatherAdapter extends RecyclerView.Adapter<CityListWeatherAdapter.ViewHolder> {
 
     private CityWeatherData[] items;
     private LayoutInflater inflater;
 
-    public CityListWeatherAdapter(CityWeatherData[] items) {
+    public void setItemsList(CityWeatherData[] items) {
         this.items = items;
-    }
-
-    @Override
-    public boolean areAllItemsEnabled() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled(int position) {
-        return true;
-    }
-
-    @Override
-    public void registerDataSetObserver(DataSetObserver observer) {
-
-    }
-
-    @Override
-    public void unregisterDataSetObserver(DataSetObserver observer) {
-
-    }
-
-    @Override
-    public int getCount() {
-        return items.length;
-    }
-
-    @Override
-    public CityWeatherData getItem(int position) {
-        return items[position];
     }
 
     @Override
@@ -62,33 +27,25 @@ public class CityListWeatherAdapter implements ListAdapter {
         return items[position].id;
     }
 
-    public View createEmptyLayout(ViewGroup parent) {
+    @Override
+    public int getItemCount() {
+        if (items == null) return 0;
+        return items.length;
+    }
+
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (inflater == null) {
             inflater = LayoutInflater.from(parent.getContext());
         }
-        return inflater.inflate(R.layout.list_city_item, parent, false);
+
+        View itemView = inflater.inflate(R.layout.list_city_item, parent, false);
+        return new ViewHolder(itemView);
     }
 
     @Override
-    public boolean hasStableIds() {
-        return true;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        CityWeatherData itemData = getItem(position);
-        ViewHolder viewHolder;
-        if (convertView == null) {
-            convertView = createEmptyLayout(parent);
-            viewHolder = new ViewHolder(convertView);
-            convertView.setTag(viewHolder);
-        } else {
-            viewHolder = (ViewHolder) convertView.getTag();
-        }
-        if (itemData.id != viewHolder.itemId) {
-            viewHolder.bindView(itemData);
-        }
-        return convertView;
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        holder.bindView(items[position]);
     }
 
     @Override
@@ -96,17 +53,7 @@ public class CityListWeatherAdapter implements ListAdapter {
         return 0;
     }
 
-    @Override
-    public int getViewTypeCount() {
-        return 1;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return items == null || items.length == 0;
-    }
-
-    private static class ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         private int itemId;
         private String iconUrl;
         private TextView cityName;
@@ -114,6 +61,7 @@ public class CityListWeatherAdapter implements ListAdapter {
         private ImageView weatherIcon;
 
         private ViewHolder(@NonNull View itemView) {
+            super(itemView);
             this.cityName = (TextView) itemView.findViewById(R.id.cityName);
             this.temperature = (TextView) itemView.findViewById(R.id.temperature);
             this.weatherIcon = (ImageView) itemView.findViewById(R.id.weatherIcon);
@@ -124,6 +72,17 @@ public class CityListWeatherAdapter implements ListAdapter {
             this.iconUrl = cityWeatherData.getWeatherIconUrl();
             this.cityName.setText(cityWeatherData.name);
             this.temperature.setText(cityWeatherData.main.getTempFormated());
+
+            // I don't manually detect and stop process of image display when view holder
+            // data is changed, because Universal Image Loading library (UILL for short) checks
+            // weather view hash has changed or not before applying loaded bitmap.
+
+            // There is no public method  to stop UILL image loading thread, so it's possible that
+            // short living memory leaks will appear, but images should be also cached on disc and
+            // there is not that many different ones. So this kind of app should be effected in
+            // any way by this.
+
+            // You can check my settings for UILL initialization in #WeatherApp class
             ImageLoader.getInstance().displayImage(iconUrl, weatherIcon);
         }
     }

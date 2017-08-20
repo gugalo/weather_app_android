@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="let.it.be.weatherapp.MainActivity">
+    tools:context="let.it.be.weatherapp.MainActivity"
+    android:background="#eee">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -21,10 +22,12 @@
     </android.support.design.widget.AppBarLayout>
 
 
-    <android.support.v7.widget.ListViewCompat
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/cityList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:listitem="@layout/list_city_item" />
 
