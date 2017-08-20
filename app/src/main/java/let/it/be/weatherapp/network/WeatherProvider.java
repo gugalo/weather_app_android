@@ -11,6 +11,7 @@ import retrofit2.http.Query;
 
 public final class WeatherProvider {
 
+    public static final String API_ICON_ENDPOINT = "http://openweathermap.org/img/w/%s.png";
     private static final String API_ENDPOINT = "https://api.openweathermap.org/";
     private static final String API_KEY = "35f423c78290666a4c44c24a2015fa7f";
     private static final String API_VERSION = "2.5";

@@ -2,6 +2,8 @@ package let.it.be.weatherapp.models.weather;
 
 import java.util.Map;
 
+import let.it.be.weatherapp.network.WeatherProvider;
+
 public class CityWeatherData {
     public final int id;
     public final double dt;
@@ -25,5 +27,12 @@ public class CityWeatherData {
         this.snow = snow;
         this.clouds = clouds;
         this.weather = weather;
+    }
+
+    public String getWeatherIconUrl() {
+        if (weather == null || weather.length == 0){
+            return null;
+        }
+        return String.format(WeatherProvider.API_ICON_ENDPOINT, weather[0].icon);
     }
 }
