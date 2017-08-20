@@ -13,6 +13,10 @@ public class WeatherApp extends Application {
     public void onCreate() {
         super.onCreate();
 
+        // Setup image loading library
+        // I set cache image on hard disc as well as in temp memory, but I setup so that images
+        // cached in memory would be always weak memory cache!
+        // I also set simple fade effect for better user experience
         DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
