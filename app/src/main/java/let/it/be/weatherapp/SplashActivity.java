@@ -37,21 +37,19 @@ public class SplashActivity extends AppCompatActivity {
     private ResultListener<CurrentWeatherData> onSettingsLoaded = new ResultListener<CurrentWeatherData>() {
         @Override
         public void onSuccess(CurrentWeatherData result) {
-            Log.e(TAG, "Current weather info loaded successfully");
             gotToNextActivity(result, null);
         }
 
         @Override
         public void onFailed(NetworkException error) {
-            Log.e(TAG, "Error loading current weather", error);
             gotToNextActivity(null, error);
         }
     };
 
     private void gotToNextActivity(CurrentWeatherData result, NetworkException error){
         Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-        intent.putExtra(CurrentWeatherData.TAG, result);
-        intent.putExtra(NetworkException.TAG, error);
+        if (result != null) intent.putExtra(CurrentWeatherData.TAG, result);
+        if (error != null) intent.putExtra(NetworkException.TAG, error);
         startActivity(intent);
         finish();
     }

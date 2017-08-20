@@ -5,4 +5,5 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="city_list_title">Estonia current weather</string>
+    <string name="network_error_message">Error loading info, please try again later</string>
 </resources>

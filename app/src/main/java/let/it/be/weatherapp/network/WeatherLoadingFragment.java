@@ -36,8 +36,11 @@ public final class WeatherLoadingFragment extends Fragment {
             listener.onSuccess(thisInstance.currentWeatherData);
         } else if (thisInstance.error != null) {
             listener.onFailed(thisInstance.error);
-        } else {
+        } else if (thisInstance.currentNetworkCall == null) {
             thisInstance.loadDataAsync();
+        } else {
+            // this case means that thread is currently in progress already
+            // do nothing
         }
         return thisInstance;
     }
@@ -57,6 +60,10 @@ public final class WeatherLoadingFragment extends Fragment {
     }
 
     private void loadDataAsync() {
+        if (currentNetworkCall != null) {
+            // do not start new loading process if it is already loading
+            return;
+        }
         currentWeatherData = null;
         error = null;
         currentNetworkCall = WeatherProvider.requestCurrentWeather(ESTONIA_MAP_POSITION);
@@ -70,12 +77,14 @@ public final class WeatherLoadingFragment extends Fragment {
                 }
 
                 currentWeatherData = response.body();
+                currentNetworkCall = null;
                 if (resultListener != null) resultListener.onSuccess(currentWeatherData);
             }
 
             @Override
             public void onFailure(@NonNull Call<CurrentWeatherData> call, @NonNull Throwable t) {
                 error = new NetworkException(t);
+                currentNetworkCall = null;
                 if (resultListener != null) resultListener.onFailed(error);
             }
         });
@@ -106,5 +115,9 @@ public final class WeatherLoadingFragment extends Fragment {
     public void onDestroy() {
         stopBackgroundProcess();
         super.onDestroy();
+    }
+
+    public void retry() {
+        loadDataAsync();
     }
 }
