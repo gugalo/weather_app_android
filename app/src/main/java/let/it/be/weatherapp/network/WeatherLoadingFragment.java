@@ -1,5 +1,7 @@
 package let.it.be.weatherapp.network;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
@@ -12,112 +14,32 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * Headless fragment for loading weather data in background thread
- */
-public final class WeatherLoadingFragment extends Fragment {
+@SuppressLint("ValidFragment")
+public final class WeatherLoadingFragment  extends AbstractNetworkingFragment<CurrentWeatherData> {
 
     private static final String ESTONIA_MAP_POSITION = "22.34,57.71,28.25,59.70,10";
-    public static final String TAG = WeatherLoadingFragment.class.getSimpleName();
+    public static final String TAG = ForecastLoadingFragment.class.getSimpleName();
 
-    private CurrentWeatherData currentWeatherData;
-    private ResultListener<CurrentWeatherData> resultListener;
-    private NetworkException error;
-    private Call<CurrentWeatherData> currentNetworkCall;
-
-    public static WeatherLoadingFragment newInstance(FragmentManager fm, ResultListener<CurrentWeatherData> listener) {
-        WeatherLoadingFragment thisInstance = (WeatherLoadingFragment) fm.findFragmentByTag(TAG);
-        if (thisInstance == null) {
-            thisInstance = new WeatherLoadingFragment();
-            fm.beginTransaction().add(thisInstance, TAG).commit();
-        }
-        thisInstance.setListener(listener);
-        if (thisInstance.currentWeatherData != null) {
-            listener.onSuccess(thisInstance.currentWeatherData);
-        } else if (thisInstance.error != null) {
-            listener.onFailed(thisInstance.error);
-        } else if (thisInstance.currentNetworkCall == null) {
-            thisInstance.loadDataAsync();
-        } else {
-            // this case means that thread is currently in progress already
-            // do nothing
-        }
-        return thisInstance;
+    /**
+     * You might say that this is mistake and that fragment must be instantiated using empty
+     * constructor. But that is not true for all cases. Main idea for empty fragment constructor
+     * is for system to gracefully handle fragment re-creation. This is from docs : "fragment must
+     * have an empty constructor, so it can be instantiated when restoring its activity's state".
+     * But this fragment main idea is to maintain instance during configuration changes. But if
+     * activity is recreated because of some other cases as low on memory, then this should be
+     * handle by activity it self, since all information in this case should be loaded again
+     * from internet.
+     */
+    public WeatherLoadingFragment(Activity activity) {
+        super(activity, TAG);
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+    protected Call<CurrentWeatherData> getNetworkCall() {
+        return WeatherProvider.requestCurrentWeather(ESTONIA_MAP_POSITION);
     }
 
-    public CurrentWeatherData getCurrentWeatherData() {
-        return currentWeatherData;
-    }
-
-    private void setListener(ResultListener<CurrentWeatherData> listener) {
-        this.resultListener = listener;
-    }
-
-    private void loadDataAsync() {
-        if (currentNetworkCall != null) {
-            // do not start new loading process if it is already loading
-            return;
-        }
-        currentWeatherData = null;
-        error = null;
-        currentNetworkCall = WeatherProvider.requestCurrentWeather(ESTONIA_MAP_POSITION);
-        currentNetworkCall.enqueue(new Callback<CurrentWeatherData>() {
-            @Override
-            public void onResponse(@NonNull Call<CurrentWeatherData> call, @NonNull Response<CurrentWeatherData> response) {
-                if (!response.isSuccessful()) {
-                    error = new ResponseException("Response code: " + response.code());
-                    if (resultListener != null) resultListener.onFailed(error);
-                    return;
-                }
-
-                currentWeatherData = response.body();
-                currentNetworkCall = null;
-                if (resultListener != null) resultListener.onSuccess(currentWeatherData);
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<CurrentWeatherData> call, @NonNull Throwable t) {
-                error = new NetworkException(t);
-                currentNetworkCall = null;
-                if (resultListener != null) resultListener.onFailed(error);
-            }
-        });
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        // remove reference to activity to prevent memory leak
-        resultListener = null;
-    }
-
-    public void destroy() {
-        stopBackgroundProcess();
-        if (getActivity() != null) {
-            getActivity().getFragmentManager().beginTransaction().remove(this).commit();
-        }
-    }
-
-    public void stopBackgroundProcess() {
-        if (currentNetworkCall != null) {
-            currentNetworkCall.cancel();
-            currentNetworkCall = null;
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        stopBackgroundProcess();
-        super.onDestroy();
-    }
-
-    public void retry() {
-        loadDataAsync();
+    public static WeatherLoadingFragment findFragment(Activity activity) {
+        return (WeatherLoadingFragment) findFragment(activity, TAG);
     }
 }

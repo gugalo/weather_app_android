@@ -1,6 +1,5 @@
 package let.it.be.weatherapp;
 
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.StringRes;
@@ -89,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void restoreState(Bundle savedInstanceState) {
-        FragmentManager fm = getFragmentManager();
         State oldState = State.parse(savedInstanceState.getInt(State.TAG));
 
         if (oldState == State.IDLE) {
@@ -102,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
             state = State.ERROR_RETRY;
             retryButton.setVisibility(View.GONE);
             retryProgress.setVisibility(View.VISIBLE);
-            workerFragment = WeatherLoadingFragment.newInstance(fm, weatherDataListener);
+            workerFragment = getWeatherLoadingFragment();
         }
     }
 
@@ -127,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
             showCritErrorMessage(R.string.network_error_message);
             return;
         }
+        state = State.IDLE;
         cityList.setVisibility(View.VISIBLE);
         errorContainer.setVisibility(View.GONE);
         cityListAdapter.setItemsList(result.list);
@@ -174,8 +173,8 @@ public class MainActivity extends AppCompatActivity {
                     retryButton.setVisibility(View.GONE);
                     retryProgress.setVisibility(View.VISIBLE);
                     if (workerFragment == null) {
-                        FragmentManager fm = getFragmentManager();
-                        workerFragment = WeatherLoadingFragment.newInstance(fm, weatherDataListener);
+                        workerFragment = getWeatherLoadingFragment();
+                        workerFragment.startDataLoading();
                     } else {
                         workerFragment.retry();
                     }
@@ -185,6 +184,15 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+    private WeatherLoadingFragment getWeatherLoadingFragment() {
+        WeatherLoadingFragment weatherFragment = WeatherLoadingFragment.findFragment(this);
+        if (weatherFragment == null) {
+            weatherFragment = new WeatherLoadingFragment(this);
+        }
+        weatherFragment.setResultListener(weatherDataListener);
+        return weatherFragment;
+    }
 
     private void showCritErrorMessage(@StringRes int resid) {
         showCritErrorMessage(getResources().getString(resid));

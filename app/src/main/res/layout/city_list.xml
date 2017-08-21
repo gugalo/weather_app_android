@@ -29,47 +29,10 @@
         android:visibility="gone"
         tools:visibility="visible">
 
-        <ImageView
-            android:id="@+id/errorSignImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/error_sign"
-            android:layout_above="@+id/errorBottomContainer"
-            android:layout_centerHorizontal="true"/>
-
-        <LinearLayout
-            android:id="@+id/errorBottomContainer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_centerInParent="true"
-            android:layout_margin="25dp"
-            android:gravity="center_vertical">
-
-            <ProgressBar
-                android:id="@+id/errorRetryProgress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"/>
-
-            <ImageView
-                android:id="@+id/errorRetryButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_refresh"
-                android:tint="#c0c0c0"/>
-
-            <TextView
-                android:id="@+id/errorMessageText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                tools:text="@string/network_error_message"
-                android:layout_weight="1"/>
-
-        </LinearLayout>
+        <include
+            layout="@layout/error_screen"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
     </RelativeLayout>
 
