@@ -6,6 +6,9 @@ import android.os.Parcelable;
 import com.google.gson.internal.LinkedTreeMap;
 
 public class CityData implements Parcelable {
+
+    public static final String TAG = CityData.class.getSimpleName();
+
     public final int id;
     public final String name;
     public final LinkedTreeMap coord;

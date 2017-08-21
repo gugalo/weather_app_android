@@ -1,6 +1,7 @@
 package let.it.be.weatherapp;
 
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.StringRes;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import let.it.be.weatherapp.adapters.CityListWeatherAdapter;
+import let.it.be.weatherapp.adapters.RecycleViewItemClickedListener;
+import let.it.be.weatherapp.models.CityData;
 import let.it.be.weatherapp.models.exceptions.NetworkException;
 import let.it.be.weatherapp.models.weather.CurrentWeatherData;
 import let.it.be.weatherapp.network.ResultListener;
@@ -69,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         cityList = (RecyclerView) findViewById(R.id.cityList);
         cityList.setLayoutManager(layoutManager);
         cityList.setAdapter(cityListAdapter);
+        cityList.addOnItemTouchListener(createItemListener());
 
         if (savedInstanceState != null) {
             restoreState(savedInstanceState);
@@ -140,10 +144,25 @@ public class MainActivity extends AppCompatActivity {
             }
 
             // other stuff to clean
-//            cityListAdapter.setOnItemClickListener(null);
             cityList.setAdapter(null);
             cityList.setLayoutManager(null);
         }
+    }
+
+    private RecycleViewItemClickedListener createItemListener() {
+        return new RecycleViewItemClickedListener(this, new RecycleViewItemClickedListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                if (cityListAdapter == null) return;
+                openForecastForCity(cityListAdapter.getItemId(position));
+            }
+        });
+    }
+
+    private void openForecastForCity(long cityId) {
+        Intent intent = new Intent(this, ForecastActivity.class);
+        intent.putExtra(CityData.TAG, cityId);
+        startActivity(intent);
     }
 
     private View.OnClickListener clickListener = new View.OnClickListener() {
