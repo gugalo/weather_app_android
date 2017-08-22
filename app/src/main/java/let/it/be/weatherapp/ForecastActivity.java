@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -24,6 +25,7 @@ public class ForecastActivity extends AppCompatActivity {
 
     private ForecastLoadingFragment workerFragment;
     private CityWeatherData cityCurrentWeather;
+    private ActionBar actionBar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,6 +33,9 @@ public class ForecastActivity extends AppCompatActivity {
         setContentView(R.layout.activity_forecat);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        actionBar = getSupportActionBar();
+        actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         cityCurrentWeather = getIntent().getParcelableExtra(CityWeatherData.TAG);
         updateCurrentWeatherInfo(cityCurrentWeather);
@@ -41,6 +46,12 @@ public class ForecastActivity extends AppCompatActivity {
         } else {
             restoreState(savedInstanceState);
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     private void updateCurrentWeatherInfo(CityWeatherData weatherData) {
