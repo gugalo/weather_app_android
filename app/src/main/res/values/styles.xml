@@ -23,4 +23,16 @@
         <item name="android:windowBackground">@drawable/background_splash_screen</item>
     </style>
 
+    <style name="AppTheme.CardView" parent="AppTheme">
+        <item name="android:layout_marginLeft">5dp</item>
+        <item name="android:layout_marginRight">5dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+        <item name="cardCornerRadius">3dp</item>
+        <item name="contentPaddingBottom">10dp</item>
+        <item name="contentPaddingLeft">15dp</item>
+        <item name="contentPaddingRight">15dp</item>
+        <item name="contentPaddingTop">10dp</item>
+        <item name="cardBackgroundColor">#fff</item>
+    </style>
+
 </resources>

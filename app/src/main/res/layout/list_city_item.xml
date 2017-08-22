@@ -5,15 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="3dp"
-    app:contentPaddingBottom="10dp"
-    app:contentPaddingLeft="15dp"
-    app:contentPaddingRight="15dp"
-    app:contentPaddingTop="10dp"
-    android:layout_marginLeft="5dp"
-    android:layout_marginRight="5dp"
-    android:layout_marginBottom="4dp"
-    app:cardBackgroundColor="#FFFFFF">
+    style="@style/AppTheme.CardView">
 
     <LinearLayout
         android:layout_width="match_parent"

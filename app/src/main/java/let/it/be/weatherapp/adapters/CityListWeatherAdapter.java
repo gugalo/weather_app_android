@@ -27,6 +27,10 @@ public class CityListWeatherAdapter extends RecyclerView.Adapter<CityListWeather
         return items[position].id;
     }
 
+    public CityWeatherData getItem(int position) {
+        return items[position];
+    }
+
     @Override
     public int getItemCount() {
         if (items == null) return 0;

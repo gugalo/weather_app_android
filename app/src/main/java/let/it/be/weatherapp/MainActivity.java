@@ -14,8 +14,8 @@ import android.widget.TextView;
 
 import let.it.be.weatherapp.adapters.CityListWeatherAdapter;
 import let.it.be.weatherapp.adapters.RecycleViewItemClickedListener;
-import let.it.be.weatherapp.models.CityData;
 import let.it.be.weatherapp.models.exceptions.NetworkException;
+import let.it.be.weatherapp.models.weather.CityWeatherData;
 import let.it.be.weatherapp.models.weather.CurrentWeatherData;
 import let.it.be.weatherapp.network.ResultListener;
 import let.it.be.weatherapp.network.WeatherLoadingFragment;
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.city_list);
+        setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(R.string.city_list_title);
@@ -153,14 +153,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(View view, int position) {
                 if (cityListAdapter == null) return;
-                openForecastForCity(cityListAdapter.getItemId(position));
+                openForecastForCity(cityListAdapter.getItem(position));
             }
         });
     }
 
-    private void openForecastForCity(long cityId) {
+    private void openForecastForCity(CityWeatherData cityWeatherDta) {
         Intent intent = new Intent(this, ForecastActivity.class);
-        intent.putExtra(CityData.TAG, cityId);
+        intent.putExtra(CityWeatherData.TAG, cityWeatherDta);
         startActivity(intent);
     }
 

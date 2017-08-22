@@ -8,6 +8,9 @@ import java.util.LinkedHashMap;
 import let.it.be.weatherapp.network.WeatherProvider;
 
 public class CityWeatherData implements Parcelable {
+
+    public static final String TAG = CityWeatherData.class.getSimpleName();
+
     public final int id;
     public final double dt;
     public final String name;

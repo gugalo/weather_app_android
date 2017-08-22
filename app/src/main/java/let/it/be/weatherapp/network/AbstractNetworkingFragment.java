@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import let.it.be.weatherapp.models.exceptions.NetworkException;
 import retrofit2.Call;
@@ -105,6 +106,7 @@ public abstract class AbstractNetworkingFragment<T> extends Fragment {
         savedResult = null;
         savedError = null;
         currentNetworkCall = getNetworkCall();
+        Log.d("Networking", currentNetworkCall.request().toString());
         currentNetworkCall.enqueue(new Callback<T>() {
             @Override
             public void onResponse(@NonNull Call<T> call, @NonNull Response<T> response) {
