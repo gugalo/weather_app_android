@@ -11,23 +11,24 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import let.it.be.weatherapp.R;
+import let.it.be.weatherapp.models.weather.CityForecastData;
 import let.it.be.weatherapp.models.weather.CityWeatherData;
 
-public class CityListWeatherAdapter extends RecyclerView.Adapter<CityListWeatherAdapter.ViewHolder> {
+public class ForecastListAdapter extends RecyclerView.Adapter<ForecastListAdapter.ViewHolder> {
 
-    private CityWeatherData[] items;
+    private CityForecastData[] items;
     private LayoutInflater inflater;
 
-    public void setItemsList(CityWeatherData[] items) {
+    public void setItemsList(CityForecastData[] items) {
         this.items = items;
     }
 
     @Override
     public long getItemId(int position) {
-        return items[position].id;
+        return RecyclerView.NO_ID;
     }
 
-    public CityWeatherData getItem(int position) {
+    public CityForecastData getItem(int position) {
         return items[position];
     }
 
@@ -43,7 +44,7 @@ public class CityListWeatherAdapter extends RecyclerView.Adapter<CityListWeather
             inflater = LayoutInflater.from(parent.getContext());
         }
 
-        View itemView = inflater.inflate(R.layout.list_city_item, parent, false);
+        View itemView = inflater.inflate(R.layout.list_forecast_item, parent, false);
         return new ViewHolder(itemView);
     }
 
@@ -58,22 +59,26 @@ public class CityListWeatherAdapter extends RecyclerView.Adapter<CityListWeather
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private int itemId;
-        private TextView cityName;
-        private TextView temperature;
+        private TextView dayOfWeekLabel;
+        private TextView dateLabel;
         private ImageView weatherIcon;
+        private TextView descriptionLabel;
+        private TextView temperatureLabel;
 
         private ViewHolder(@NonNull View itemView) {
             super(itemView);
-            this.cityName = (TextView) itemView.findViewById(R.id.cityName);
-            this.temperature = (TextView) itemView.findViewById(R.id.temperature);
+            this.dayOfWeekLabel = (TextView) itemView.findViewById(R.id.dayOfWeek);
+            this.dateLabel = (TextView) itemView.findViewById(R.id.time);
             this.weatherIcon = (ImageView) itemView.findViewById(R.id.weatherIcon);
+            this.descriptionLabel = (TextView) itemView.findViewById(R.id.description);
+            this.temperatureLabel = (TextView) itemView.findViewById(R.id.temperature);
         }
 
-        private void bindView(@NonNull CityWeatherData cityWeatherData) {
-            this.itemId = cityWeatherData.id;
-            this.cityName.setText(cityWeatherData.name);
-            this.temperature.setText(cityWeatherData.main.getTempFormated());
+        private void bindView(@NonNull CityForecastData forecastData) {
+            this.dayOfWeekLabel.setText(String.format("%ta", forecastData.dt*1000));
+            this.dateLabel.setText(String.format("%tR", forecastData.dt*1000));
+            this.descriptionLabel.setText(forecastData.weather[0].description);
+            this.temperatureLabel.setText(String.format("%.0f°/%.0f°", forecastData.main.tempMin, forecastData.main.tempMax));
 
             // I don't manually detect and stop process of image display when view holder
             // data is changed, because Universal Image Loading library (UILL for short) checks
@@ -85,7 +90,7 @@ public class CityListWeatherAdapter extends RecyclerView.Adapter<CityListWeather
             // any way by this.
 
             // You can check my settings for UILL initialization in #WeatherApp class
-            String iconUrl = cityWeatherData.weather[0].getWeatherIconUrl();
+            String iconUrl = forecastData.weather[0].getWeatherIconUrl();
             ImageLoader.getInstance().displayImage(iconUrl, weatherIcon);
         }
     }

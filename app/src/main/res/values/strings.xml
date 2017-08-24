@@ -6,4 +6,9 @@
 
     <string name="city_list_title">Estonia current weather</string>
     <string name="network_error_message">Error loading info, please try again later</string>
+    <string name="temp_max_value_label">Max %2.1f°</string>
+    <string name="temp_min_value_label">Min %2.1f°</string>
+    <string name="wind_value_label">Wind: %1$.0f°, %2$.0fkm/h</string>
+    <string name="pressure_value_label">Pressure: %.0f hPa</string>
+    <string name="humidity_value_label">Humidity: %.0f%%</string>
 </resources>

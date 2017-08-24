@@ -30,8 +30,12 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        FragmentManager fragmentManager = getFragmentManager();
-        workerFragment =  WeatherLoadingFragment.newInstance(fragmentManager, onSettingsLoaded);
+        workerFragment =  WeatherLoadingFragment.findFragment(this);
+        if (workerFragment == null) {
+            workerFragment = new WeatherLoadingFragment(this);
+            workerFragment.startDataLoading();
+        }
+        workerFragment.setResultListener(onSettingsLoaded);
     }
 
     private ResultListener<CurrentWeatherData> onSettingsLoaded = new ResultListener<CurrentWeatherData>() {

@@ -10,15 +10,16 @@ import android.support.annotation.NonNull;
 import let.it.be.weatherapp.models.exceptions.NetworkException;
 import let.it.be.weatherapp.models.exceptions.ResponseException;
 import let.it.be.weatherapp.models.weather.CurrentWeatherData;
+import let.it.be.weatherapp.models.weather.WeatherForecastData;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 @SuppressLint("ValidFragment")
-public final class WeatherLoadingFragment  extends AbstractNetworkingFragment<CurrentWeatherData> {
+public final class ForecastLoadingFragment extends AbstractNetworkingFragment<WeatherForecastData> {
 
-    private static final String ESTONIA_MAP_POSITION = "22.34,57.71,28.25,59.70,10";
     public static final String TAG = ForecastLoadingFragment.class.getSimpleName();
+    private final long cityId;
 
     /**
      * You might say that this is mistake and that fragment must be instantiated using empty
@@ -30,16 +31,17 @@ public final class WeatherLoadingFragment  extends AbstractNetworkingFragment<Cu
      * handle by activity it self, since all information in this case should be loaded again
      * from internet.
      */
-    public WeatherLoadingFragment(Activity activity) {
+    public ForecastLoadingFragment(Activity activity, long cityId) {
         super(activity, TAG);
+        this.cityId = cityId;
     }
 
     @Override
-    protected Call<CurrentWeatherData> getNetworkCall() {
-        return WeatherProvider.requestCurrentWeather(ESTONIA_MAP_POSITION);
+    protected Call<WeatherForecastData> getNetworkCall() {
+        return WeatherProvider.requestCityForecast(String.valueOf(cityId));
     }
 
-    public static WeatherLoadingFragment findFragment(Activity activity) {
-        return (WeatherLoadingFragment) findFragment(activity, TAG);
+    public static ForecastLoadingFragment findFragment(Activity activity) {
+        return (ForecastLoadingFragment) findFragment(activity, TAG);
     }
 }

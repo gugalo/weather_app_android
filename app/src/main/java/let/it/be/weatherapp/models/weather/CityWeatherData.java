@@ -8,8 +8,11 @@ import java.util.LinkedHashMap;
 import let.it.be.weatherapp.network.WeatherProvider;
 
 public class CityWeatherData implements Parcelable {
+
+    public static final String TAG = CityWeatherData.class.getSimpleName();
+
     public final int id;
-    public final double dt;
+    public final long dt;
     public final String name;
     public final LinkedHashMap coord;
     public final WeatherData main;
@@ -19,7 +22,7 @@ public class CityWeatherData implements Parcelable {
     public final LinkedHashMap clouds;
     public final WeatherIdData[] weather;
 
-    public CityWeatherData(int id, double dt, String name, LinkedHashMap coord, WeatherData main, WindData wind, FalloutData rain, FalloutData snow, LinkedHashMap clouds, WeatherIdData[] weather) {
+    public CityWeatherData(int id, long dt, String name, LinkedHashMap coord, WeatherData main, WindData wind, FalloutData rain, FalloutData snow, LinkedHashMap clouds, WeatherIdData[] weather) {
         this.id = id;
         this.dt = dt;
         this.name = name;
@@ -34,7 +37,7 @@ public class CityWeatherData implements Parcelable {
 
     protected CityWeatherData(Parcel in) {
         id = in.readInt();
-        dt = in.readDouble();
+        dt = in.readLong();
         name = in.readString();
         coord = (LinkedHashMap) in.readSerializable();
         main = in.readParcelable(WeatherData.class.getClassLoader());
@@ -57,13 +60,6 @@ public class CityWeatherData implements Parcelable {
         }
     };
 
-    public String getWeatherIconUrl() {
-        if (weather == null || weather.length == 0) {
-            return null;
-        }
-        return String.format(WeatherProvider.API_ICON_ENDPOINT, weather[0].icon);
-    }
-
     @Override
     public int describeContents() {
         return 0;
@@ -72,7 +68,7 @@ public class CityWeatherData implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(id);
-        dest.writeDouble(dt);
+        dest.writeLong(dt);
         dest.writeString(name);
         dest.writeSerializable(coord);
         dest.writeParcelable(main, flags);

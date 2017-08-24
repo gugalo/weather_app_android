@@ -13,8 +13,10 @@ public final class WeatherProvider {
 
     public static final String API_ICON_ENDPOINT = "http://openweathermap.org/img/w/%s.png";
     private static final String API_ENDPOINT = "https://api.openweathermap.org/";
-    private static final String API_KEY = "35f423c78290666a4c44c24a2015fa7f";
     private static final String API_VERSION = "2.5";
+    private static final String API_KEY = "35f423c78290666a4c44c24a2015fa7f";
+    private static final String API_UNITS = "metric";
+    private static final String API_CONST_ARGUMENTS = "units=" + API_UNITS + "&APPID=" + API_KEY;
 
     private static Retrofit retrofit;
     static {
@@ -28,12 +30,12 @@ public final class WeatherProvider {
     }
 
     private interface WeatherForecastService {
-        @GET("data/" + API_VERSION + "/forecast?APPID=" + API_KEY)
+        @GET("data/" + API_VERSION + "/forecast?" + API_CONST_ARGUMENTS)
         Call<WeatherForecastData> getForecastForCity(@Query("id") String cityId);
     }
 
     private interface CurrentWeatherService {
-        @GET("data/" + API_VERSION + "/box/city?APPID=" + API_KEY)
+        @GET("data/" + API_VERSION + "/box/city?" + API_CONST_ARGUMENTS)
         Call<CurrentWeatherData> getCurrentWeather(@Query("bbox") String cityMapBounds);
     }
 

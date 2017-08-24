@@ -1,6 +1,6 @@
 package let.it.be.weatherapp;
 
-import android.app.FragmentManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.StringRes;
 import android.support.v7.app.AppCompatActivity;
@@ -9,14 +9,16 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import let.it.be.weatherapp.adapters.CityListWeatherAdapter;
+import let.it.be.weatherapp.adapters.RecycleViewItemClickedListener;
 import let.it.be.weatherapp.models.exceptions.NetworkException;
+import let.it.be.weatherapp.models.weather.CityWeatherData;
 import let.it.be.weatherapp.models.weather.CurrentWeatherData;
 import let.it.be.weatherapp.network.ResultListener;
 import let.it.be.weatherapp.network.WeatherLoadingFragment;
+import let.it.be.weatherapp.views.ErrorView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,21 +49,17 @@ public class MainActivity extends AppCompatActivity {
 
     // views
     private RecyclerView cityList;
-    private ViewGroup errorContainer;
-    private View retryButton;
-    private View retryProgress;
+    private ErrorView errorView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.city_list);
+        setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(R.string.city_list_title);
 
-        errorContainer = (ViewGroup) findViewById(R.id.errorContainer);
-        retryButton = findViewById(R.id.errorRetryButton);
-        retryProgress = findViewById(R.id.errorRetryProgress);
+        errorView = (ErrorView) findViewById(R.id.errorView);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -69,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         cityList = (RecyclerView) findViewById(R.id.cityList);
         cityList.setLayoutManager(layoutManager);
         cityList.setAdapter(cityListAdapter);
+        cityList.addOnItemTouchListener(createItemListener());
 
         if (savedInstanceState != null) {
             restoreState(savedInstanceState);
@@ -85,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void restoreState(Bundle savedInstanceState) {
-        FragmentManager fm = getFragmentManager();
         State oldState = State.parse(savedInstanceState.getInt(State.TAG));
 
         if (oldState == State.IDLE) {
@@ -96,9 +94,8 @@ public class MainActivity extends AppCompatActivity {
         showCritErrorMessage(R.string.network_error_message);
         if (oldState == State.ERROR_RETRY) {
             state = State.ERROR_RETRY;
-            retryButton.setVisibility(View.GONE);
-            retryProgress.setVisibility(View.VISIBLE);
-            workerFragment = WeatherLoadingFragment.newInstance(fm, weatherDataListener);
+            errorView.showProgress();
+            workerFragment = getWeatherLoadingFragment();
         }
     }
 
@@ -123,8 +120,9 @@ public class MainActivity extends AppCompatActivity {
             showCritErrorMessage(R.string.network_error_message);
             return;
         }
+        state = State.IDLE;
         cityList.setVisibility(View.VISIBLE);
-        errorContainer.setVisibility(View.GONE);
+        errorView.setVisibility(View.GONE);
         cityListAdapter.setItemsList(result.list);
         cityListAdapter.notifyDataSetChanged();
     }
@@ -140,44 +138,58 @@ public class MainActivity extends AppCompatActivity {
             }
 
             // other stuff to clean
-//            cityListAdapter.setOnItemClickListener(null);
             cityList.setAdapter(null);
             cityList.setLayoutManager(null);
         }
     }
 
-    private View.OnClickListener clickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()) {
-                case R.id.errorRetryButton:
-                    state = State.ERROR_RETRY;
-                    retryButton.setVisibility(View.GONE);
-                    retryProgress.setVisibility(View.VISIBLE);
-                    if (workerFragment == null) {
-                        FragmentManager fm = getFragmentManager();
-                        workerFragment = WeatherLoadingFragment.newInstance(fm, weatherDataListener);
-                    } else {
-                        workerFragment.retry();
-                    }
-                    break;
-                default:
-                    break;
+    private RecycleViewItemClickedListener createItemListener() {
+        return new RecycleViewItemClickedListener(this, new RecycleViewItemClickedListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                if (cityListAdapter == null) return;
+                openForecastForCity(cityListAdapter.getItem(position));
             }
+        });
+    }
+
+    private void openForecastForCity(CityWeatherData cityWeatherDta) {
+        Intent intent = new Intent(this, ForecastActivity.class);
+        intent.putExtra(CityWeatherData.TAG, cityWeatherDta);
+        startActivity(intent);
+    }
+
+    private WeatherLoadingFragment getWeatherLoadingFragment() {
+        WeatherLoadingFragment weatherFragment = WeatherLoadingFragment.findFragment(this);
+        if (weatherFragment == null) {
+            weatherFragment = new WeatherLoadingFragment(this);
         }
-    };
+        weatherFragment.setResultListener(weatherDataListener);
+        return weatherFragment;
+    }
 
     private void showCritErrorMessage(@StringRes int resid) {
         showCritErrorMessage(getResources().getString(resid));
     }
 
     private void showCritErrorMessage(String message) {
-        ((TextView) errorContainer.findViewById(R.id.errorMessageText)).setText(message);
-        retryButton.setOnClickListener(clickListener);
-        retryButton.setVisibility(View.VISIBLE);
+        errorView.setErrorMessage(message);
+        errorView.setRertyButtonListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                state = State.ERROR_RETRY;
+                errorView.showProgress();
+                if (workerFragment == null) {
+                    workerFragment = getWeatherLoadingFragment();
+                    workerFragment.startDataLoading();
+                } else {
+                    workerFragment.retry();
+                }
+            }
+        });
+        errorView.hideProgress();
+        errorView.setVisibility(View.VISIBLE);
         cityList.setVisibility(View.GONE);
-        retryProgress.setVisibility(View.GONE);
-        errorContainer.setVisibility(View.VISIBLE);
     }
 
     @Override
