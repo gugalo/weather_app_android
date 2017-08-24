@@ -10,9 +10,9 @@ import android.view.ViewConfiguration;
  * Plan was to do a simple touch to click check and pass view with it's item position in RecycleView
  * But somehow it became a bit complicated. Next time should use GestureDetector or set listener in
  * RecycleView custom adapter instead...
- *
+ * <p>
  * ... but it was fun =)
- * */
+ */
 public class RecycleViewItemClickedListener implements RecyclerView.OnItemTouchListener {
 
     private int maxClickMoveError;
@@ -63,11 +63,6 @@ public class RecycleViewItemClickedListener implements RecyclerView.OnItemTouchL
 
     }
 
-
-    public interface OnItemClickListener {
-        void onItemClick(View view, int position);
-    }
-
     private void startAClick(MotionEvent e) {
         clickEvent = e;
         isWithinClickDistanceBounds = true;
@@ -90,5 +85,9 @@ public class RecycleViewItemClickedListener implements RecyclerView.OnItemTouchL
         }
 
         return clickEvent != null;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(View view, int position);
     }
 }

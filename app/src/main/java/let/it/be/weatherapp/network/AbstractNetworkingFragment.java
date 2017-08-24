@@ -36,6 +36,10 @@ public abstract class AbstractNetworkingFragment<T> extends Fragment {
         activity.getFragmentManager().beginTransaction().add(this, tag).commit();
     }
 
+    public static AbstractNetworkingFragment<?> findFragment(Activity activity, String tag) {
+        return (AbstractNetworkingFragment<?>) activity.getFragmentManager().findFragmentByTag(tag);
+    }
+
     public void setResultListener(ResultListener<T> resultListener) {
         setResultListener(resultListener, true);
     }
@@ -56,10 +60,6 @@ public abstract class AbstractNetworkingFragment<T> extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-    }
-
-    public static AbstractNetworkingFragment<?> findFragment(Activity activity, String tag) {
-        return (AbstractNetworkingFragment<?>) activity.getFragmentManager().findFragmentByTag(tag);
     }
 
     public void startDataLoading() {

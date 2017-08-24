@@ -25,23 +25,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private enum State {
-        IDLE(1), ERROR(2), ERROR_RETRY(3), UNKNOWN(0);
-        public static final String TAG = State.class.getSimpleName();
-        private final int code;
-
-        State(int code) {
-            this.code = code;
-        }
-
-        public static State parse(int code) {
-            for (State state : State.values()) {
-                if (state.code == code) return state;
-            }
-            return UNKNOWN;
-        }
-    }
-
     // states
     private State state = State.IDLE;
     private CurrentWeatherData currentWeatherData;
@@ -52,6 +35,22 @@ public class MainActivity extends AppCompatActivity {
     // views
     private RecyclerView cityList;
     private ErrorView errorView;
+
+
+    private ResultListener<CurrentWeatherData> weatherDataListener = new ResultListener<CurrentWeatherData>() {
+        @Override
+        public void onSuccess(CurrentWeatherData result) {
+            Log.d(TAG, "Current weather info loaded successfully");
+            setWeatherInformation(result);
+        }
+
+        @Override
+        public void onFailed(NetworkException error) {
+            Log.e(TAG, "Error loading current weather", error);
+            state = State.ERROR;
+            showCritErrorMessage(R.string.network_error_message);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,21 +101,6 @@ public class MainActivity extends AppCompatActivity {
             workerFragment = getWeatherLoadingFragment();
         }
     }
-
-    private ResultListener<CurrentWeatherData> weatherDataListener = new ResultListener<CurrentWeatherData>() {
-        @Override
-        public void onSuccess(CurrentWeatherData result) {
-            Log.d(TAG, "Current weather info loaded successfully");
-            setWeatherInformation(result);
-        }
-
-        @Override
-        public void onFailed(NetworkException error) {
-            Log.e(TAG, "Error loading current weather", error);
-            state = State.ERROR;
-            showCritErrorMessage(R.string.network_error_message);
-        }
-    };
 
     private void setWeatherInformation(CurrentWeatherData result) {
         currentWeatherData = result;
@@ -209,5 +193,22 @@ public class MainActivity extends AppCompatActivity {
         outState.putInt(State.TAG, state.code);
         outState.putParcelable(CurrentWeatherData.TAG, currentWeatherData);
         outState.putInt(CityData.TAG, favoriteCity);
+    }
+
+    private enum State {
+        IDLE(1), ERROR(2), ERROR_RETRY(3), UNKNOWN(0);
+        public static final String TAG = State.class.getSimpleName();
+        private final int code;
+
+        State(int code) {
+            this.code = code;
+        }
+
+        public static State parse(int code) {
+            for (State state : State.values()) {
+                if (state.code == code) return state;
+            }
+            return UNKNOWN;
+        }
     }
 }

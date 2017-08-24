@@ -6,9 +6,24 @@ import android.os.Parcelable;
 import com.google.gson.annotations.SerializedName;
 
 public class WeatherData implements Parcelable {
+
+    public static final Creator<WeatherData> CREATOR = new Creator<WeatherData>() {
+        @Override
+        public WeatherData createFromParcel(Parcel in) {
+            return new WeatherData(in);
+        }
+
+        @Override
+        public WeatherData[] newArray(int size) {
+            return new WeatherData[size];
+        }
+    };
+
     public final float temp;
-    @SerializedName("temp_min") public final float tempMin;
-    @SerializedName("temp_max") public final float tempMax;
+    @SerializedName("temp_min")
+    public final float tempMin;
+    @SerializedName("temp_max")
+    public final float tempMax;
     public final float pressure;
     public final float humidity;
 
@@ -28,20 +43,8 @@ public class WeatherData implements Parcelable {
         humidity = in.readFloat();
     }
 
-    public static final Creator<WeatherData> CREATOR = new Creator<WeatherData>() {
-        @Override
-        public WeatherData createFromParcel(Parcel in) {
-            return new WeatherData(in);
-        }
-
-        @Override
-        public WeatherData[] newArray(int size) {
-            return new WeatherData[size];
-        }
-    };
-
     public String getTempFormated() {
-        return  String.format("%2.1f°", temp);
+        return String.format("%2.1f°", temp);
     }
 
     @Override

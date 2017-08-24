@@ -3,7 +3,20 @@ package let.it.be.weatherapp.models.weather;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class WindData implements Parcelable{
+public class WindData implements Parcelable {
+    public static final Creator<WindData> CREATOR = new Creator<WindData>() {
+        @Override
+        public WindData createFromParcel(Parcel in) {
+            return new WindData(in);
+        }
+
+        @Override
+        public WindData[] newArray(int size) {
+            return new WindData[size];
+        }
+    };
+
+
     public final float speed;
     public final float deg;
 
@@ -16,18 +29,6 @@ public class WindData implements Parcelable{
         speed = in.readFloat();
         deg = in.readFloat();
     }
-
-    public static final Creator<WindData> CREATOR = new Creator<WindData>() {
-        @Override
-        public WindData createFromParcel(Parcel in) {
-            return new WindData(in);
-        }
-
-        @Override
-        public WindData[] newArray(int size) {
-            return new WindData[size];
-        }
-    };
 
     @Override
     public int describeContents() {

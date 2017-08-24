@@ -5,11 +5,20 @@ import android.os.Parcelable;
 
 import java.util.LinkedHashMap;
 
-import let.it.be.weatherapp.network.WeatherProvider;
-
 public class CityWeatherData implements Parcelable {
 
     public static final String TAG = CityWeatherData.class.getSimpleName();
+    public static final Creator<CityWeatherData> CREATOR = new Creator<CityWeatherData>() {
+        @Override
+        public CityWeatherData createFromParcel(Parcel in) {
+            return new CityWeatherData(in);
+        }
+
+        @Override
+        public CityWeatherData[] newArray(int size) {
+            return new CityWeatherData[size];
+        }
+    };
 
     public final int id;
     public final long dt;
@@ -47,18 +56,6 @@ public class CityWeatherData implements Parcelable {
         clouds = (LinkedHashMap) in.readSerializable();
         weather = in.createTypedArray(WeatherIdData.CREATOR);
     }
-
-    public static final Creator<CityWeatherData> CREATOR = new Creator<CityWeatherData>() {
-        @Override
-        public CityWeatherData createFromParcel(Parcel in) {
-            return new CityWeatherData(in);
-        }
-
-        @Override
-        public CityWeatherData[] newArray(int size) {
-            return new CityWeatherData[size];
-        }
-    };
 
     @Override
     public int describeContents() {

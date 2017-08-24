@@ -35,6 +35,23 @@ public class ForecastActivity extends AppCompatActivity {
     private ForecastListAdapter forecastAdapter;
     private ErrorView errorView;
 
+    private ResultListener<WeatherForecastData> forecastDataListener = new ResultListener<WeatherForecastData>() {
+        @Override
+        public void onSuccess(WeatherForecastData result) {
+            Log.d(TAG, "Forecast info loaded successfully");
+            hideProgress();
+            errorView.setVisibility(View.GONE);
+            setForecastInfo(result);
+        }
+
+        @Override
+        public void onFailed(NetworkException error) {
+            Log.e(TAG, "Error loading forecast data", error);
+            hideProgress();
+            showCritErrorMessage(R.string.network_error_message);
+        }
+    };
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,23 +132,6 @@ public class ForecastActivity extends AppCompatActivity {
         forecastFragment.setResultListener(forecastDataListener);
         return forecastFragment;
     }
-
-    private ResultListener<WeatherForecastData> forecastDataListener = new ResultListener<WeatherForecastData>() {
-        @Override
-        public void onSuccess(WeatherForecastData result) {
-            Log.d(TAG, "Forecast info loaded successfully");
-            hideProgress();
-            errorView.setVisibility(View.GONE);
-            setForecastInfo(result);
-        }
-
-        @Override
-        public void onFailed(NetworkException error) {
-            Log.e(TAG, "Error loading forecast data", error);
-            hideProgress();
-            showCritErrorMessage(R.string.network_error_message);
-        }
-    };
 
     private void setForecastInfo(WeatherForecastData result) {
         forecastAdapter.setItemsList(result.list);

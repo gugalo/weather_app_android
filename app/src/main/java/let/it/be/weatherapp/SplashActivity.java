@@ -1,11 +1,9 @@
 package let.it.be.weatherapp;
 
-import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 
 import let.it.be.weatherapp.models.CityData;
 import let.it.be.weatherapp.models.exceptions.NetworkException;
@@ -23,24 +21,6 @@ public class SplashActivity extends AppCompatActivity {
 
     private static final String TAG = SplashActivity.class.getSimpleName();
     private WeatherLoadingFragment workerFragment;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        workerFragment =  WeatherLoadingFragment.findFragment(this);
-        if (workerFragment == null) {
-            workerFragment = new WeatherLoadingFragment(this);
-            workerFragment.startDataLoading();
-        }
-        workerFragment.setResultListener(onSettingsLoaded);
-    }
-
     private ResultListener<CurrentWeatherData> onSettingsLoaded = new ResultListener<CurrentWeatherData>() {
         @Override
         public void onSuccess(CurrentWeatherData result) {
@@ -53,7 +33,24 @@ public class SplashActivity extends AppCompatActivity {
         }
     };
 
-    private void gotToNextActivity(CurrentWeatherData result, NetworkException error){
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_splash);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        workerFragment = WeatherLoadingFragment.findFragment(this);
+        if (workerFragment == null) {
+            workerFragment = new WeatherLoadingFragment(this);
+            workerFragment.startDataLoading();
+        }
+        workerFragment.setResultListener(onSettingsLoaded);
+    }
+
+    private void gotToNextActivity(CurrentWeatherData result, NetworkException error) {
         Intent intent = new Intent(SplashActivity.this, MainActivity.class);
         if (result != null) intent.putExtra(CurrentWeatherData.TAG, result);
         if (error != null) intent.putExtra(NetworkException.TAG, error);
