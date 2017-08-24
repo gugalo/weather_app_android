@@ -1,5 +1,6 @@
 package let.it.be.weatherapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.StringRes;
@@ -9,10 +10,10 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
 import let.it.be.weatherapp.adapters.CityListWeatherAdapter;
 import let.it.be.weatherapp.adapters.RecycleViewItemClickedListener;
+import let.it.be.weatherapp.models.CityData;
 import let.it.be.weatherapp.models.exceptions.NetworkException;
 import let.it.be.weatherapp.models.weather.CityWeatherData;
 import let.it.be.weatherapp.models.weather.CurrentWeatherData;
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private CurrentWeatherData currentWeatherData;
     private CityListWeatherAdapter cityListAdapter;
     private WeatherLoadingFragment workerFragment;
+    private int favoriteCity;
 
     // views
     private RecyclerView cityList;
@@ -60,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(R.string.city_list_title);
 
         errorView = (ErrorView) findViewById(R.id.errorView);
+        favoriteCity = getIntent().getIntExtra(CityData.TAG, -1);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -85,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void restoreState(Bundle savedInstanceState) {
         State oldState = State.parse(savedInstanceState.getInt(State.TAG));
+        favoriteCity = savedInstanceState.getInt(CityData.TAG);
 
         if (oldState == State.IDLE) {
             CurrentWeatherData weatherData = savedInstanceState.getParcelable(CurrentWeatherData.TAG);
@@ -141,6 +145,11 @@ public class MainActivity extends AppCompatActivity {
             cityList.setAdapter(null);
             cityList.setLayoutManager(null);
         }
+
+        // best place to save info is pause... =)
+        getSharedPreferences(WeatherApp.TAG, Context.MODE_PRIVATE).edit()
+                .putInt(CityData.TAG, favoriteCity)
+                .apply();
     }
 
     private RecycleViewItemClickedListener createItemListener() {
@@ -148,7 +157,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(View view, int position) {
                 if (cityListAdapter == null) return;
-                openForecastForCity(cityListAdapter.getItem(position));
+                CityWeatherData selectedItem = cityListAdapter.getItem(position);
+                openForecastForCity(selectedItem);
+                favoriteCity = selectedItem.id;
             }
         });
     }
@@ -197,5 +208,6 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         outState.putInt(State.TAG, state.code);
         outState.putParcelable(CurrentWeatherData.TAG, currentWeatherData);
+        outState.putInt(CityData.TAG, favoriteCity);
     }
 }

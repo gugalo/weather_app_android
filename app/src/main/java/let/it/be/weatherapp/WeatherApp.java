@@ -9,6 +9,9 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
 public class WeatherApp extends Application {
+
+    public static final String TAG = WeatherApp.class.getSimpleName();
+
     @Override
     public void onCreate() {
         super.onCreate();

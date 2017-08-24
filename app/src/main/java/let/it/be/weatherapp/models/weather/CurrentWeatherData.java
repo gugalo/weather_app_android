@@ -19,6 +19,13 @@ public class CurrentWeatherData implements Parcelable {
         this.list = list;
     }
 
+    public CityWeatherData findCityById(int cityId) {
+        for (CityWeatherData item : list) {
+            if (item.id == cityId) return item;
+        }
+        return null;
+    }
+
     protected CurrentWeatherData(Parcel in) {
         cod = in.readInt();
         calctime = in.readFloat();

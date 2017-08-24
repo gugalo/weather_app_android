@@ -36,7 +36,7 @@ public class ErrorView extends FrameLayout {
     public ErrorView(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         removeAllViews();
-        addView(LayoutInflater.from(getContext()).inflate(R.layout.error_screen, null));
+        inflate(getContext(), R.layout.error_screen, this);
         retryButton = findViewById(R.id.errorRetryButton);
         retryProgress = findViewById(R.id.errorRetryProgress);
         errorText = (TextView) findViewById(R.id.errorMessageText);

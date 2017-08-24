@@ -24,7 +24,7 @@ public class CityListWeatherAdapter extends RecyclerView.Adapter<CityListWeather
 
     @Override
     public long getItemId(int position) {
-        return items[position].id;
+        return getItem(position).id;
     }
 
     public CityWeatherData getItem(int position) {
@@ -49,7 +49,7 @@ public class CityListWeatherAdapter extends RecyclerView.Adapter<CityListWeather
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.bindView(items[position]);
+        holder.bindView(getItem(position));
     }
 
     @Override

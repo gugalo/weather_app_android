@@ -1,12 +1,15 @@
 package let.it.be.weatherapp;
 
 import android.app.FragmentManager;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import let.it.be.weatherapp.models.CityData;
 import let.it.be.weatherapp.models.exceptions.NetworkException;
+import let.it.be.weatherapp.models.weather.CityWeatherData;
 import let.it.be.weatherapp.models.weather.CurrentWeatherData;
 import let.it.be.weatherapp.network.ResultListener;
 import let.it.be.weatherapp.network.WeatherLoadingFragment;
@@ -55,6 +58,17 @@ public class SplashActivity extends AppCompatActivity {
         if (result != null) intent.putExtra(CurrentWeatherData.TAG, result);
         if (error != null) intent.putExtra(NetworkException.TAG, error);
         startActivity(intent);
+
+        int favoriteCityId = getSharedPreferences(WeatherApp.TAG, Context.MODE_PRIVATE)
+                .getInt(CityData.TAG, -1);
+        if (favoriteCityId >= 0) {
+            CityWeatherData favoriteCity = result.findCityById(favoriteCityId);
+            if (favoriteCity != null) {
+                Intent secondIntent = new Intent(this, ForecastActivity.class);
+                secondIntent.putExtra(CityWeatherData.TAG, favoriteCity);
+                startActivity(secondIntent);
+            }
+        }
         finish();
     }
 
