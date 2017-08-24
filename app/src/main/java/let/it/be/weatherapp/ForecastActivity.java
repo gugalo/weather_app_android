@@ -119,11 +119,6 @@ public class ForecastActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
     private ForecastLoadingFragment getForecastLoadingFragment(int cityId) {
         ForecastLoadingFragment forecastFragment = ForecastLoadingFragment.findFragment(this);
         if (forecastFragment == null) {
@@ -177,12 +172,12 @@ public class ForecastActivity extends AppCompatActivity {
         ((TextView) findViewById(viewId)).setText(text);
     }
 
-    private void showCritErrorMessage(@StringRes int resid) {
-        showCritErrorMessage(getResources().getString(resid));
+    private void showCritErrorMessage(@StringRes int resId) {
+        showCritErrorMessage(getResources().getString(resId));
     }
 
     private void showCritErrorMessage(String message) {
-        errorView.setRertyButtonListener(new View.OnClickListener() {
+        errorView.setRetryButtonListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 errorView.showProgress();

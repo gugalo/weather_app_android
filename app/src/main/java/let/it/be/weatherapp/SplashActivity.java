@@ -15,7 +15,7 @@ import let.it.be.weatherapp.network.WeatherLoadingFragment;
 /**
  * This activity has setup in styles 'passive' splash screen that wait for app
  * initialization by system (recommended by android patterns). After 'passive' splash screen it
- * displayes 'active' splash screen that waits for in app settings to load.
+ * displays 'active' splash screen that waits for in app settings to load.
  */
 public class SplashActivity extends AppCompatActivity {
 

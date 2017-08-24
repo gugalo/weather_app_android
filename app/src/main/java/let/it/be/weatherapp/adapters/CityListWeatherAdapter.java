@@ -73,7 +73,7 @@ public class CityListWeatherAdapter extends RecyclerView.Adapter<CityListWeather
         private void bindView(@NonNull CityWeatherData cityWeatherData) {
             this.itemId = cityWeatherData.id;
             this.cityName.setText(cityWeatherData.name);
-            this.temperature.setText(cityWeatherData.main.getTempFormated());
+            this.temperature.setText(cityWeatherData.main.getTempFormatted());
 
             // I don't manually detect and stop process of image display when view holder
             // data is changed, because Universal Image Loading library (UILL for short) checks

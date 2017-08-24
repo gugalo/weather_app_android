@@ -13,7 +13,7 @@ import android.widget.TextView;
 import let.it.be.weatherapp.R;
 
 /**
- * Really simple view wich doesnt contain any settings or attr of it's own since it has no need
+ * Really simple view which doesn't contain any settings or attr of it's own since it has no need
  * for at least at the moment. Used only to give fast access to single layout with programmatic
  * reference to some of it's elements
  */
@@ -41,7 +41,7 @@ public class ErrorView extends FrameLayout {
         errorText = (TextView) findViewById(R.id.errorMessageText);
     }
 
-    public void setRertyButtonListener(OnClickListener listener) {
+    public void setRetryButtonListener(OnClickListener listener) {
         retryButton.setOnClickListener(listener);
     }
 

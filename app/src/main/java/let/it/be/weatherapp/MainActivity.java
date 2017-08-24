@@ -163,13 +163,13 @@ public class MainActivity extends AppCompatActivity {
         return weatherFragment;
     }
 
-    private void showCritErrorMessage(@StringRes int resid) {
-        showCritErrorMessage(getResources().getString(resid));
+    private void showCritErrorMessage(@StringRes int resId) {
+        showCritErrorMessage(getResources().getString(resId));
     }
 
     private void showCritErrorMessage(String message) {
         errorView.setErrorMessage(message);
-        errorView.setRertyButtonListener(new View.OnClickListener() {
+        errorView.setRetryButtonListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 state = State.ERROR_RETRY;

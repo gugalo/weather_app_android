@@ -43,7 +43,7 @@ public class WeatherData implements Parcelable {
         humidity = in.readFloat();
     }
 
-    public String getTempFormated() {
+    public String getTempFormatted() {
         return String.format("%2.1f°", temp);
     }
 
