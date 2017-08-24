@@ -4,6 +4,19 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class WeatherDataExtended extends WeatherData implements Parcelable {
+
+    public static final Creator<WeatherDataExtended> CREATOR = new Creator<WeatherDataExtended>() {
+        @Override
+        public WeatherDataExtended createFromParcel(Parcel in) {
+            return new WeatherDataExtended(in);
+        }
+
+        @Override
+        public WeatherDataExtended[] newArray(int size) {
+            return new WeatherDataExtended[size];
+        }
+    };
+
     public final float sea_level;
     public final float grnd_level;
     public final float temp_kf;
@@ -21,18 +34,6 @@ public class WeatherDataExtended extends WeatherData implements Parcelable {
         grnd_level = in.readFloat();
         temp_kf = in.readFloat();
     }
-
-    public static final Creator<WeatherDataExtended> CREATOR = new Creator<WeatherDataExtended>() {
-        @Override
-        public WeatherDataExtended createFromParcel(Parcel in) {
-            return new WeatherDataExtended(in);
-        }
-
-        @Override
-        public WeatherDataExtended[] newArray(int size) {
-            return new WeatherDataExtended[size];
-        }
-    };
 
     @Override
     public int describeContents() {

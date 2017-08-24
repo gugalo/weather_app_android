@@ -6,6 +6,18 @@ import android.os.Parcelable;
 import let.it.be.weatherapp.network.WeatherProvider;
 
 public class WeatherIdData implements Parcelable {
+    public static final Creator<WeatherIdData> CREATOR = new Creator<WeatherIdData>() {
+        @Override
+        public WeatherIdData createFromParcel(Parcel in) {
+            return new WeatherIdData(in);
+        }
+
+        @Override
+        public WeatherIdData[] newArray(int size) {
+            return new WeatherIdData[size];
+        }
+    };
+
     public final int id;
     public final String main;
     public final String description;
@@ -24,18 +36,6 @@ public class WeatherIdData implements Parcelable {
         description = in.readString();
         icon = in.readString();
     }
-
-    public static final Creator<WeatherIdData> CREATOR = new Creator<WeatherIdData>() {
-        @Override
-        public WeatherIdData createFromParcel(Parcel in) {
-            return new WeatherIdData(in);
-        }
-
-        @Override
-        public WeatherIdData[] newArray(int size) {
-            return new WeatherIdData[size];
-        }
-    };
 
     public String getWeatherIconUrl() {
         return String.format(WeatherProvider.API_ICON_ENDPOINT, icon);

@@ -2,18 +2,9 @@ package let.it.be.weatherapp.network;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
 
-import let.it.be.weatherapp.models.exceptions.NetworkException;
-import let.it.be.weatherapp.models.exceptions.ResponseException;
-import let.it.be.weatherapp.models.weather.CurrentWeatherData;
 import let.it.be.weatherapp.models.weather.WeatherForecastData;
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 @SuppressLint("ValidFragment")
 public final class ForecastLoadingFragment extends AbstractNetworkingFragment<WeatherForecastData> {
@@ -36,12 +27,12 @@ public final class ForecastLoadingFragment extends AbstractNetworkingFragment<We
         this.cityId = cityId;
     }
 
+    public static ForecastLoadingFragment findFragment(Activity activity) {
+        return (ForecastLoadingFragment) findFragment(activity, TAG);
+    }
+
     @Override
     protected Call<WeatherForecastData> getNetworkCall() {
         return WeatherProvider.requestCityForecast(String.valueOf(cityId));
-    }
-
-    public static ForecastLoadingFragment findFragment(Activity activity) {
-        return (ForecastLoadingFragment) findFragment(activity, TAG);
     }
 }

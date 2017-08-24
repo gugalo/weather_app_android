@@ -7,16 +7,6 @@ import com.google.gson.annotations.SerializedName;
 
 public class FalloutData implements Parcelable {
 
-    @SerializedName("3h") public final float threeHour;
-
-    public FalloutData(float threeHour) {
-        this.threeHour = threeHour;
-    }
-
-    protected FalloutData(Parcel in) {
-        threeHour = in.readFloat();
-    }
-
     public static final Creator<FalloutData> CREATOR = new Creator<FalloutData>() {
         @Override
         public FalloutData createFromParcel(Parcel in) {
@@ -28,6 +18,17 @@ public class FalloutData implements Parcelable {
             return new FalloutData[size];
         }
     };
+
+    @SerializedName("3h")
+    public final float threeHour;
+
+    public FalloutData(float threeHour) {
+        this.threeHour = threeHour;
+    }
+
+    protected FalloutData(Parcel in) {
+        threeHour = in.readFloat();
+    }
 
     @Override
     public int describeContents() {

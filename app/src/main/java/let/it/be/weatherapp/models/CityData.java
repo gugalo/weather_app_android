@@ -8,6 +8,17 @@ import com.google.gson.internal.LinkedTreeMap;
 public class CityData implements Parcelable {
 
     public static final String TAG = CityData.class.getSimpleName();
+    public static final Creator<CityData> CREATOR = new Creator<CityData>() {
+        @Override
+        public CityData createFromParcel(Parcel in) {
+            return new CityData(in);
+        }
+
+        @Override
+        public CityData[] newArray(int size) {
+            return new CityData[size];
+        }
+    };
 
     public final int id;
     public final String name;
@@ -27,18 +38,6 @@ public class CityData implements Parcelable {
         coord = (LinkedTreeMap) in.readSerializable();
         country = in.readString();
     }
-
-    public static final Creator<CityData> CREATOR = new Creator<CityData>() {
-        @Override
-        public CityData createFromParcel(Parcel in) {
-            return new CityData(in);
-        }
-
-        @Override
-        public CityData[] newArray(int size) {
-            return new CityData[size];
-        }
-    };
 
     @Override
     public int describeContents() {

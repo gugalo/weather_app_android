@@ -35,6 +35,23 @@ public class ForecastActivity extends AppCompatActivity {
     private ForecastListAdapter forecastAdapter;
     private ErrorView errorView;
 
+    private ResultListener<WeatherForecastData> forecastDataListener = new ResultListener<WeatherForecastData>() {
+        @Override
+        public void onSuccess(WeatherForecastData result) {
+            Log.d(TAG, "Forecast info loaded successfully");
+            hideProgress();
+            errorView.setVisibility(View.GONE);
+            setForecastInfo(result);
+        }
+
+        @Override
+        public void onFailed(NetworkException error) {
+            Log.e(TAG, "Error loading forecast data", error);
+            hideProgress();
+            showCritErrorMessage(R.string.network_error_message);
+        }
+    };
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,11 +119,6 @@ public class ForecastActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
     private ForecastLoadingFragment getForecastLoadingFragment(int cityId) {
         ForecastLoadingFragment forecastFragment = ForecastLoadingFragment.findFragment(this);
         if (forecastFragment == null) {
@@ -115,23 +127,6 @@ public class ForecastActivity extends AppCompatActivity {
         forecastFragment.setResultListener(forecastDataListener);
         return forecastFragment;
     }
-
-    private ResultListener<WeatherForecastData> forecastDataListener = new ResultListener<WeatherForecastData>() {
-        @Override
-        public void onSuccess(WeatherForecastData result) {
-            Log.d(TAG, "Forecast info loaded successfully");
-            hideProgress();
-            errorView.setVisibility(View.GONE);
-            setForecastInfo(result);
-        }
-
-        @Override
-        public void onFailed(NetworkException error) {
-            Log.e(TAG, "Error loading forecast data", error);
-            hideProgress();
-            showCritErrorMessage(R.string.network_error_message);
-        }
-    };
 
     private void setForecastInfo(WeatherForecastData result) {
         forecastAdapter.setItemsList(result.list);
@@ -177,12 +172,12 @@ public class ForecastActivity extends AppCompatActivity {
         ((TextView) findViewById(viewId)).setText(text);
     }
 
-    private void showCritErrorMessage(@StringRes int resid) {
-        showCritErrorMessage(getResources().getString(resid));
+    private void showCritErrorMessage(@StringRes int resId) {
+        showCritErrorMessage(getResources().getString(resId));
     }
 
     private void showCritErrorMessage(String message) {
-        errorView.setRertyButtonListener(new View.OnClickListener() {
+        errorView.setRetryButtonListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 errorView.showProgress();

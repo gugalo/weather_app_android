@@ -1,9 +1,6 @@
 <resources>
     <string name="app_name">WeatherApp</string>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-
     <string name="city_list_title">Estonia current weather</string>
     <string name="network_error_message">Error loading info, please try again later</string>
     <string name="temp_max_value_label">Max %2.1f°</string>

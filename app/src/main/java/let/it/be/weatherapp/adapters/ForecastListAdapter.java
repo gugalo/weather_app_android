@@ -12,7 +12,6 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import let.it.be.weatherapp.R;
 import let.it.be.weatherapp.models.weather.CityForecastData;
-import let.it.be.weatherapp.models.weather.CityWeatherData;
 
 public class ForecastListAdapter extends RecyclerView.Adapter<ForecastListAdapter.ViewHolder> {
 
@@ -75,8 +74,8 @@ public class ForecastListAdapter extends RecyclerView.Adapter<ForecastListAdapte
         }
 
         private void bindView(@NonNull CityForecastData forecastData) {
-            this.dayOfWeekLabel.setText(String.format("%ta", forecastData.dt*1000));
-            this.dateLabel.setText(String.format("%tR", forecastData.dt*1000));
+            this.dayOfWeekLabel.setText(String.format("%ta", forecastData.dt * 1000));
+            this.dateLabel.setText(String.format("%tR", forecastData.dt * 1000));
             this.descriptionLabel.setText(forecastData.weather[0].description);
             this.temperatureLabel.setText(String.format("%.0f°/%.0f°", forecastData.main.tempMin, forecastData.main.tempMax));
 
