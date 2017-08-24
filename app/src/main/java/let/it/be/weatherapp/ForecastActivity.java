@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,6 +22,7 @@ import let.it.be.weatherapp.models.weather.CityWeatherData;
 import let.it.be.weatherapp.models.weather.WeatherForecastData;
 import let.it.be.weatherapp.network.ForecastLoadingFragment;
 import let.it.be.weatherapp.network.ResultListener;
+import let.it.be.weatherapp.views.ErrorView;
 
 public class ForecastActivity extends AppCompatActivity {
 
@@ -31,6 +33,7 @@ public class ForecastActivity extends AppCompatActivity {
     private ActionBar actionBar;
     private RecyclerView forecastsList;
     private ForecastListAdapter forecastAdapter;
+    private ErrorView errorView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,6 +44,8 @@ public class ForecastActivity extends AppCompatActivity {
         actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
+
+        errorView = (ErrorView) findViewById(R.id.errorView);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -55,6 +60,7 @@ public class ForecastActivity extends AppCompatActivity {
         workerFragment = getForecastLoadingFragment(cityCurrentWeather.id);
         if (savedInstanceState == null) {
             workerFragment.startDataLoading();
+            showProgress();
         } else {
             restoreState(savedInstanceState);
         }
@@ -80,7 +86,20 @@ public class ForecastActivity extends AppCompatActivity {
     }
 
     private void restoreState(Bundle savedInstanceState) {
-        // TODO: restoreState
+        if (workerFragment.isLoading()) {
+            // work in progress, just wait for callbacks to fire
+            showProgress();
+            return;
+        }
+        if (workerFragment.getSavedResult() != null) {
+            hideProgress();
+            setForecastInfo(workerFragment.getSavedResult());
+            return;
+        }
+        if (workerFragment.getSavedError() != null) {
+            hideProgress();
+            showCritErrorMessage(R.string.network_error_message);
+        }
     }
 
     @Override
@@ -101,13 +120,16 @@ public class ForecastActivity extends AppCompatActivity {
         @Override
         public void onSuccess(WeatherForecastData result) {
             Log.d(TAG, "Forecast info loaded successfully");
+            hideProgress();
+            errorView.setVisibility(View.GONE);
             setForecastInfo(result);
         }
 
         @Override
         public void onFailed(NetworkException error) {
             Log.e(TAG, "Error loading forecast data", error);
-            // TODO: show error
+            hideProgress();
+            showCritErrorMessage(R.string.network_error_message);
         }
     };
 
@@ -127,8 +149,19 @@ public class ForecastActivity extends AppCompatActivity {
             }
 
             // other stuff to clean
-            // TODO
+            forecastsList.setAdapter(null);
+            forecastsList.setLayoutManager(null);
         }
+    }
+
+    public void showProgress() {
+        findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+        forecastsList.setVisibility(View.GONE);
+    }
+
+    public void hideProgress() {
+        findViewById(R.id.progressBar).setVisibility(View.GONE);
+        forecastsList.setVisibility(View.VISIBLE);
     }
 
     public void setTextViewValue(@IdRes int viewId, @StringRes int stringId, Object... args) {
@@ -142,5 +175,23 @@ public class ForecastActivity extends AppCompatActivity {
             text = String.valueOf(args[0]);
         }
         ((TextView) findViewById(viewId)).setText(text);
+    }
+
+    private void showCritErrorMessage(@StringRes int resid) {
+        showCritErrorMessage(getResources().getString(resid));
+    }
+
+    private void showCritErrorMessage(String message) {
+        errorView.setRertyButtonListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                errorView.showProgress();
+                workerFragment.retry();
+            }
+        });
+        errorView.setErrorMessage(message);
+        errorView.hideProgress();
+        errorView.setVisibility(View.VISIBLE);
+        forecastsList.setVisibility(View.GONE);
     }
 }

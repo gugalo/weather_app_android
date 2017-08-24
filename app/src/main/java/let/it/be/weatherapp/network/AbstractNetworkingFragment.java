@@ -148,5 +148,17 @@ public abstract class AbstractNetworkingFragment<T> extends Fragment {
         }
     }
 
+    public boolean isLoading() {
+        return currentNetworkCall != null;
+    }
+
+    public T getSavedResult() {
+        return savedResult;
+    }
+
+    public NetworkException getSavedError() {
+        return savedError;
+    }
+
     protected abstract Call<T> getNetworkCall();
 }
