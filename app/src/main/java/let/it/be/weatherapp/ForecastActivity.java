@@ -6,6 +6,8 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.ImageView;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import let.it.be.weatherapp.adapters.ForecastListAdapter;
 import let.it.be.weatherapp.models.exceptions.NetworkException;
 import let.it.be.weatherapp.models.weather.CityWeatherData;
 import let.it.be.weatherapp.models.weather.WeatherForecastData;
@@ -26,6 +29,8 @@ public class ForecastActivity extends AppCompatActivity {
     private ForecastLoadingFragment workerFragment;
     private CityWeatherData cityCurrentWeather;
     private ActionBar actionBar;
+    private RecyclerView forecastsList;
+    private ForecastListAdapter forecastAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,6 +41,13 @@ public class ForecastActivity extends AppCompatActivity {
         actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        forecastAdapter = new ForecastListAdapter();
+        forecastsList = (RecyclerView) findViewById(R.id.forecastView);
+        forecastsList.setLayoutManager(layoutManager);
+        forecastsList.setAdapter(forecastAdapter);
 
         cityCurrentWeather = getIntent().getParcelableExtra(CityWeatherData.TAG);
         updateCurrentWeatherInfo(cityCurrentWeather);
@@ -56,7 +68,7 @@ public class ForecastActivity extends AppCompatActivity {
 
     private void updateCurrentWeatherInfo(CityWeatherData weatherData) {
         getSupportActionBar().setTitle(weatherData.name);
-        setTextViewValue(R.id.temp, 0, weatherData.main.temp);
+        setTextViewValue(R.id.temp, "%2.1f°", weatherData.main.temp);
         setTextViewValue(R.id.tempMax, R.string.temp_max_value_label, weatherData.main.tempMax);
         setTextViewValue(R.id.tempMin, R.string.temp_min_value_label, weatherData.main.tempMin);
         setTextViewValue(R.id.wind, R.string.wind_value_label, weatherData.wind.deg, weatherData.wind.speed);
@@ -64,7 +76,7 @@ public class ForecastActivity extends AppCompatActivity {
         setTextViewValue(R.id.humidity, R.string.humidity_value_label, weatherData.main.humidity);
 
         ImageView weatherIcon = (ImageView) findViewById(R.id.weatherIcon);
-        ImageLoader.getInstance().displayImage(weatherData.getWeatherIconUrl(), weatherIcon);
+        ImageLoader.getInstance().displayImage(weatherData.weather[0].getWeatherIconUrl(), weatherIcon);
     }
 
     private void restoreState(Bundle savedInstanceState) {
@@ -89,7 +101,7 @@ public class ForecastActivity extends AppCompatActivity {
         @Override
         public void onSuccess(WeatherForecastData result) {
             Log.d(TAG, "Forecast info loaded successfully");
-            // TODO: setup layout
+            setForecastInfo(result);
         }
 
         @Override
@@ -98,6 +110,11 @@ public class ForecastActivity extends AppCompatActivity {
             // TODO: show error
         }
     };
+
+    private void setForecastInfo(WeatherForecastData result) {
+        forecastAdapter.setItemsList(result.list);
+        forecastAdapter.notifyDataSetChanged();
+    }
 
     @Override
     public void onPause() {

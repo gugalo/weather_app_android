@@ -3,6 +3,8 @@ package let.it.be.weatherapp.models.weather;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import let.it.be.weatherapp.network.WeatherProvider;
+
 public class WeatherIdData implements Parcelable {
     public final int id;
     public final String main;
@@ -34,6 +36,10 @@ public class WeatherIdData implements Parcelable {
             return new WeatherIdData[size];
         }
     };
+
+    public String getWeatherIconUrl() {
+        return String.format(WeatherProvider.API_ICON_ENDPOINT, icon);
+    }
 
     @Override
     public int describeContents() {
